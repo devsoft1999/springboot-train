@@ -5,14 +5,21 @@ import jakarta.persistence.Id;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import java.time.LocalDateTime;
+import com.pakjai.entity.model.BaseEntity;
+import jakarta.persistence.*;
 
 @Entity
-public class MoodLog {
+public class MoodLog  extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String mood;
+
     private String note;
-    private LocalDateTime createdAt = LocalDateTime.now();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+  
 }
