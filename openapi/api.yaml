@@ -1,0 +1,52 @@
+openapi: 3.0.1
+info:
+  title: Pakjai API Documentation
+  description: API documentation for the Pakjai Burnout Checker App
+  version: "1.0"
+servers:
+- url: http://localhost:8080
+  description: Generated server url
+paths:
+  /api/mood/log:
+    post:
+      tags:
+      - mood-controller
+      operationId: logMood
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MoodLogRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /api/health:
+    get:
+      tags:
+      - health-check-controller
+      operationId: health
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+components:
+  schemas:
+    MoodLogRequest:
+      type: object
+      properties:
+        mood:
+          type: string
+          description: อารมณ์ของคุณวันนี้
+          example: 😐
+        note:
+          type: string
+          description: ข้อความเพิ่มเติม
+          example: รู้สึกเฉยๆ แต่โอเค

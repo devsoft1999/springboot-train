@@ -17,3 +17,8 @@ spring:
       ddl-auto: update
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
