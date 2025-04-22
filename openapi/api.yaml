@@ -7,24 +7,33 @@ servers:
 - url: http://localhost:8080
   description: Generated server url
 paths:
-  /api/mood/log:
-    post:
+  /api/assessments:
+    get:
       tags:
-      - mood-controller
-      operationId: logMood
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/MoodLogRequest"
-        required: true
+      - assessment-controller
+      operationId: findAll
       responses:
         "200":
           description: OK
           content:
             '*/*':
               schema:
-                type: string
+                type: array
+                items:
+                  $ref: "#/components/schemas/Assessment"
+    post:
+      tags:
+      - assessment-controller
+      operationId: save
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AssessmentRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
   /api/health:
     get:
       tags:
@@ -37,16 +46,135 @@ paths:
             '*/*':
               schema:
                 type: string
+  /api/assessments/{id}:
+    get:
+      tags:
+      - assessment-controller
+      operationId: findById
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/Assessment"
+    delete:
+      tags:
+      - assessment-controller
+      operationId: delete
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "200":
+          description: OK
 components:
   schemas:
-    MoodLogRequest:
+    AssessmentAnswerRequest:
       type: object
       properties:
-        mood:
+        id:
           type: string
-          description: อารมณ์ของคุณวันนี้
-          example: 😐
-        note:
+          format: uuid
+        assessmentId:
           type: string
-          description: ข้อความเพิ่มเติม
-          example: รู้สึกเฉยๆ แต่โอเค
+          format: uuid
+        seq:
+          type: integer
+          format: int32
+        answer:
+          type: string
+        point:
+          type: integer
+          format: int32
+    AssessmentRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        seq:
+          type: integer
+          format: int32
+        question:
+          type: string
+        type:
+          type: string
+        status:
+          type: string
+        answers:
+          type: array
+          items:
+            $ref: "#/components/schemas/AssessmentAnswerRequest"
+    Assessment:
+      type: object
+      properties:
+        createdAt:
+          type: string
+          format: date-time
+        createdBy:
+          type: string
+        updatedAt:
+          type: string
+          format: date-time
+        updatedBy:
+          type: string
+        version:
+          type: integer
+          format: int32
+        id:
+          type: string
+          format: uuid
+        seq:
+          type: integer
+          format: int32
+        question:
+          type: string
+        type:
+          type: string
+        status:
+          type: string
+        answers:
+          type: array
+          items:
+            $ref: "#/components/schemas/AssessmentAnswer"
+    AssessmentAnswer:
+      type: object
+      properties:
+        createdAt:
+          type: string
+          format: date-time
+        createdBy:
+          type: string
+        updatedAt:
+          type: string
+          format: date-time
+        updatedBy:
+          type: string
+        version:
+          type: integer
+          format: int32
+        id:
+          type: string
+          format: uuid
+        assessment:
+          $ref: "#/components/schemas/Assessment"
+        seq:
+          type: integer
+          format: int32
+        answer:
+          type: string
+        point:
+          type: integer
+          format: int32
