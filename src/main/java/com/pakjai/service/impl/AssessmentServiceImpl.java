@@ -1,6 +1,8 @@
 package com.pakjai.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -38,21 +40,34 @@ public class AssessmentServiceImpl implements AssessmentService, ObjectMapper<As
         assessment.setQuestion(request.getQuestion());
         assessment.setType(request.getType());
         assessment.setStatus(request.getStatus());
-        List<AssessmentAnswer> answers = assessment.getAnswers();
-        if(answers!= null){
-           log.info("answers: {}", answers.size());
-            answers.clear();
-        }
-
-        Optional.ofNullable(request.getAnswers())
-                .ifPresent(answerRequests -> {
-                    List<AssessmentAnswer> answersFromRequest = answerRequests.stream()
-                            .map(assessmentServiceAnswerImpl::toEntity)
-                            .peek(answer -> answer.setAssessment(assessment))
-                            .collect(Collectors.toList());
     
-                    assessment.setAnswers(answersFromRequest);
-                });
+        // เตรียม answers collection ถ้ายังไม่มี
+        if (assessment.getAnswers() == null) {
+            assessment.setAnswers(new ArrayList<>());
+        }
+    
+        // สร้าง Map ของ existing answers เพื่อการเปรียบเทียบ
+        Map<UUID, AssessmentAnswer> existingAnswerMap = assessment.getAnswers().stream()
+                .filter(a -> a.getId() != null)
+                .collect(Collectors.toMap(AssessmentAnswer::getId, a -> a));
+    
+        List<AssessmentAnswer> updatedAnswers = new ArrayList<>();
+    
+        Optional.ofNullable(request.getAnswers()).ifPresent(answerRequests -> {
+            for (AssessmentAnswerRequest answerRequest : answerRequests) {
+                AssessmentAnswer answer = assessmentServiceAnswerImpl.toEntity(answerRequest);
+                answer.setAssessment(assessment);
+                updatedAnswers.add(answer);
+                existingAnswerMap.remove(answer.getId());
+            }
+        });
+    
+        // ลบ answers ที่ไม่ได้อยู่ใน request
+        assessment.getAnswers().removeIf(a -> existingAnswerMap.containsKey(a.getId()));
+    
+        // เพิ่มหรืออัปเดต answers
+        assessment.getAnswers().clear();
+        assessment.getAnswers().addAll(updatedAnswers);
     
         return assessment;
     }

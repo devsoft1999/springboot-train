@@ -37,7 +37,7 @@ public class Assessment extends BaseEntity{
     @Column(name = "status")
     private String status;
 
-    @OneToMany(mappedBy = "assessment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "assessment", cascade = CascadeType.ALL, orphanRemoval = true , fetch = FetchType.LAZY)
     private List<AssessmentAnswer> answers;
 
 }
