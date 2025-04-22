@@ -3,10 +3,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.pakjai</groupId>
-    <artifactId>burnout-checker</artifactId>
+    <artifactId>template</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>BurnoutChecker</name>
-    <description>Backend for Pakjai - Burnout Checker App</description>
+    <description>Backend for Training - Template App</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
