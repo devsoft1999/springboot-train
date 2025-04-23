@@ -3,6 +3,7 @@ package com.pakjai.entity;
 import java.util.List;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.pakjai.entity.model.BaseEntity;
 
 import jakarta.persistence.CascadeType;
@@ -38,6 +39,7 @@ public class Assessment extends BaseEntity{
     private String status;
 
     @OneToMany(mappedBy = "assessment", cascade = CascadeType.ALL, orphanRemoval = true , fetch = FetchType.LAZY)
+    @JsonManagedReference
     private List<AssessmentAnswer> answers;
 
 }

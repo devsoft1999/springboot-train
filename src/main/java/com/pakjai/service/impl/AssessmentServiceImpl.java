@@ -45,6 +45,11 @@ public class AssessmentServiceImpl implements AssessmentService, ObjectMapper<As
         if (assessment.getAnswers() == null) {
             assessment.setAnswers(new ArrayList<>());
         }
+
+        // เตรียม answers collection ถ้ายังไม่มี
+        if (assessment.getAnswers() != null) {
+            assessment.setAnswers(new ArrayList<>());
+        }
     
         // สร้าง Map ของ existing answers เพื่อการเปรียบเทียบ
         Map<UUID, AssessmentAnswer> existingAnswerMap = assessment.getAnswers().stream()
