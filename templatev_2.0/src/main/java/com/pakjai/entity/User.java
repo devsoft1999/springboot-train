@@ -22,7 +22,7 @@ public class User  extends BaseEntity{
 
     @JsonIgnore
     @Column(name = "user_password")
-    private String password;
+    private String passwordHash;
 
     @Column(name = "user_nickname")
     private String nickname;
