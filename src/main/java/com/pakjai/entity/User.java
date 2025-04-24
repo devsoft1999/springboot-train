@@ -4,9 +4,11 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.pakjai.entity.model.BaseEntity;
 
 @Data
@@ -29,5 +31,9 @@ public class User  extends BaseEntity{
 
     @Column(name = "user_last_login")
     private LocalDateTime lastLogin;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private List<UserMoodLog> moods;
 
 }

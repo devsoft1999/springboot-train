@@ -1,5 +1,6 @@
 package com.pakjai.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.pakjai.entity.model.BaseMasterEntity;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -22,6 +23,7 @@ public class UserMoodLog extends BaseMasterEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
+    @JsonBackReference
     User user;
 //
 //    @PrePersist
