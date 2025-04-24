@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.pakjai.dto.AssessmentRequest;
 import com.pakjai.entity.Assessment;
+import com.pakjai.entity.User;
 import com.pakjai.service.AssessmentService;
 
 @RestController
@@ -42,5 +43,10 @@ public class AssessmentController {
     public void delete(@PathVariable UUID id) {
         assessmentService.delete(id);
     }
-    
+
+
+    @GetMapping("/users")
+    public List<User> findAllUser() {
+        return assessmentService.findAllUser();
+    }
 }

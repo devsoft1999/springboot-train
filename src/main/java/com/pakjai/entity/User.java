@@ -6,6 +6,8 @@ import lombok.Data;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.pakjai.entity.model.BaseEntity;
 
@@ -29,5 +31,9 @@ public class User  extends BaseEntity{
 
     @Column(name = "user_last_login")
     private LocalDateTime lastLogin;
+    
+    @ManyToOne(fetch = FetchType.EAGER) // หรือใช้ LAZY + fetch join ก็ได้
+    @JoinColumn(name = "assessment_id")
+    private Assessment assessment;
 
 }

@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import com.pakjai.dto.AssessmentRequest;
 import com.pakjai.entity.Assessment;
+import com.pakjai.entity.User;
 
 public interface AssessmentService {
 
@@ -15,5 +16,7 @@ public interface AssessmentService {
     void save(AssessmentRequest assessmentRequest);
 
     void delete(UUID id);
+
+    List<User> findAllUser();
 
 }

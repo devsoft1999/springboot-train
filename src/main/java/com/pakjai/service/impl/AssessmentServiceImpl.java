@@ -14,7 +14,9 @@ import com.pakjai.dto.AssessmentAnswerRequest;
 import com.pakjai.dto.AssessmentRequest;
 import com.pakjai.entity.Assessment;
 import com.pakjai.entity.AssessmentAnswer;
+import com.pakjai.entity.User;
 import com.pakjai.repository.AssessmentRepository;
+import com.pakjai.repository.UserRepository;
 import com.pakjai.service.AssessmentService;
 import com.pakjai.service.mapper.ObjectMapper;
 
@@ -30,6 +32,9 @@ public class AssessmentServiceImpl implements AssessmentService, ObjectMapper<As
     
     @Autowired
     private AssessmentServiceAnswerImpl assessmentServiceAnswerImpl;
+
+    @Autowired
+    private UserRepository userRepository;
 
     public Assessment toEntity(AssessmentRequest request) {
         Assessment assessment = Optional.ofNullable(request.getId())
@@ -142,6 +147,11 @@ public class AssessmentServiceImpl implements AssessmentService, ObjectMapper<As
         }catch(Exception e){
             throw new RuntimeException("Error deleting assessment : " + e.getMessage());
         }
+    }
+
+    @Override
+    public List<User> findAllUser() {
+        return userRepository.findAll();
     }
 
 }
