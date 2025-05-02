@@ -19,11 +19,11 @@ public class UserBurnoutAdviceLog extends BaseMasterEntity {
 //    @Column(name = "user_note")
 //    private String note;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "burnout_advice_id")
     BurnoutAdvice burnoutAdvice ;
 

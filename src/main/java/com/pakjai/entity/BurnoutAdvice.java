@@ -1,6 +1,7 @@
 package com.pakjai.entity;
 
 import com.pakjai.entity.model.BaseMasterEntity;
+
 import jakarta.persistence.*;
 import lombok.Data;
 

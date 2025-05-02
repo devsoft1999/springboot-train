@@ -36,4 +36,8 @@ public class User  extends BaseEntity{
     @JsonManagedReference
     private List<UserMoodLog> moods;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private List<UserAssessment> userAssessments;
+
 }

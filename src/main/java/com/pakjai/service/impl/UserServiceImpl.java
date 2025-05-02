@@ -12,11 +12,19 @@ import org.springframework.stereotype.Service;
 
 import com.pakjai.dto.AssessmentAnswerRequest;
 import com.pakjai.dto.AssessmentRequest;
+import com.pakjai.dto.MoodLogRequest;
+import com.pakjai.dto.UserAssessmentAnswerRequest;
+import com.pakjai.dto.UserAssessmentRequest;
 import com.pakjai.dto.UserRequest;
 import com.pakjai.entity.Assessment;
 import com.pakjai.entity.User;
+import com.pakjai.entity.UserAssessment;
+import com.pakjai.entity.UserAssessmentAnswer;
 import com.pakjai.entity.UserMoodLog;
 import com.pakjai.repository.UserRepository;
+import com.pakjai.repository.UserMoodLogRepository;
+import com.pakjai.repository.UserAssessmentRepository;
+import com.pakjai.service.UserAssessmentService;
 import com.pakjai.service.UserService;
 import com.pakjai.service.mapper.ObjectMapper;
 
@@ -30,6 +38,17 @@ public class UserServiceImpl implements UserService, ObjectMapper<UserRequest, U
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private UserMoodLogRepository userMoodLogRepository;
+    @Autowired
+    private UserMoodLogServiceImpl userMoodLogServiceImpl;
+
+    @Autowired
+    private UserAssessmentRepository userAssessmentRepository;
+
+    @Autowired
+    private UserAssessmentServiceImpl userAssessmentServiceImpl;
+
     public User toEntity(UserRequest request) {
         User user = Optional.ofNullable(request.getId())
             .map(this::findById)
@@ -40,19 +59,54 @@ public class UserServiceImpl implements UserService, ObjectMapper<UserRequest, U
         user.setNickname(request.getNickname());
         user.setLastLogin(request.getUserLastLogin());
 
-        // if (user.getMoods() == null) {
-        //     user.setMoods(new ArrayList<>());
-        // }
+        if (user.getMoods() == null) {
+            user.setMoods(new ArrayList<>());
+        }
 
-        // Map<UUID, UserMoodLog> existingMoodMap = user.getMoods().stream()
-        //     .filter(a -> a.getId() != null)
-        //     .collect(Collectors.toMap(UserMoodLog::getId, a -> a));
+        if (user.getUserAssessments() == null) {
+            user.setUserAssessments(new ArrayList<>());
+        }
 
-        // List<UserMoodLog> updatedMoods = new ArrayList<>();
+        Map<UUID, UserMoodLog> existingMoodMap = user.getMoods().stream()
+                .filter(a -> a.getId() != null)
+                .collect(Collectors.toMap(UserMoodLog::getId, a -> a));
+    
+        List<UserMoodLog> updatedUserMoodLog = new ArrayList<>();
 
-        // Optional.ofNullable(request.getMoods()).ifPresent(moodRequests -> {
-        //     for (MoodLogRequest moodRequest : moodRequests) {}
-        // });
+        Optional.ofNullable(request.getMoods()).ifPresent(moodLogRequests -> {
+            for (MoodLogRequest moodLogRequest : moodLogRequests) {
+                UserMoodLog userMoodLog = userMoodLogServiceImpl.toEntity(moodLogRequest);
+                userMoodLog.setUser(user);
+                updatedUserMoodLog.add(userMoodLog);
+                existingMoodMap.remove(userMoodLog.getId());
+            }
+        });
+
+        user.getMoods().removeIf(a -> existingMoodMap.containsKey(a.getId()));
+    
+        user.getMoods().clear();
+        user.getMoods().addAll(updatedUserMoodLog);
+
+        Map<UUID, UserAssessment> existingUserAssessmentsMap = user.getUserAssessments().stream()
+                .filter(a -> a.getId() != null)
+                .collect(Collectors.toMap(UserAssessment::getId, a -> a));
+    
+        List<UserAssessment> updatedUserAssessments = new ArrayList<>();
+    
+        Optional.ofNullable(request.getUserAssessments()).ifPresent(userAssessmentRequests -> {
+            for (UserAssessmentRequest userAssessmentRequest : userAssessmentRequests) {
+                UserAssessment userAssessment = userAssessmentServiceImpl.toEntity(userAssessmentRequest);
+                userAssessment.setUser(user);
+                updatedUserAssessments.add(userAssessment);
+                existingUserAssessmentsMap.remove(userAssessment.getId());
+            }
+        });
+    
+        user.getUserAssessments().removeIf(a -> existingUserAssessmentsMap.containsKey(a.getId()));
+    
+        user.getUserAssessments().clear();
+        user.getUserAssessments().addAll(updatedUserAssessments);
+        
         return user;
     }
 
@@ -65,6 +119,18 @@ public class UserServiceImpl implements UserService, ObjectMapper<UserRequest, U
         userRequest.setPassword(user.getPassword());
         userRequest.setNickname(user.getNickname());
         userRequest.setUserLastLogin(user.getLastLogin());
+        if (user.getMoods() != null) {
+            List<MoodLogRequest> moods = user.getMoods().stream()
+                    .map(userMoodLogServiceImpl::toDto)
+                    .collect(Collectors.toList());
+                    userRequest.setMoods(moods);
+        }
+        if (user.getUserAssessments() != null) {
+            List<UserAssessmentRequest> userAssessments = user.getUserAssessments().stream()
+                    .map(userAssessmentServiceImpl::toDto)
+                    .collect(Collectors.toList());
+                    userRequest.setUserAssessments(userAssessments);
+        }
         return userRequest;
     }
 
@@ -94,6 +160,13 @@ public class UserServiceImpl implements UserService, ObjectMapper<UserRequest, U
         log.info("Saving user: {}", userRequest);
         try{
             User user = toEntity(userRequest);
+
+            for(UserMoodLog userMoodLog : user.getMoods()){
+                log.info("userMoodLog: {}", userMoodLog.getId());
+            }
+            for(UserAssessment userAssessment : user.getUserAssessments()){
+                log.info("userAssessment: {}", userAssessment.getId());
+            }
 
             log.info("user: {}", user.getId());
             userRepository.save(user);

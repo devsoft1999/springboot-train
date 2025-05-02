@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+import com.pakjai.entity.UserAssessment;
+
 import lombok.Data;
 
 @Data
@@ -20,4 +22,5 @@ public class UserRequest {
     private LocalDateTime userLastLogin;
 
     private List<MoodLogRequest> moods;
+    private List<UserAssessmentRequest> userAssessments;
 }
